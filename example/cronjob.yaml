@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: loki-to-slack-cronjob
+  namespace: default
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: loki-to-slack
+            image: your-dockerhub-username/loki-to-slack:latest
+            env:
+            - name: LOKI_URL
+              value: "http://loki:3100"
+            - name: CONFIGMAP_PATH
+              value: "/etc/config/queries.json"
+            - name: SLACK_WEBHOOK_URL
+              valueFrom:
+                secretKeyRef:
+                  name: slack-secret
+                  key: webhook-url
+            volumeMounts:
+            - name: config-volume
+              mountPath: /etc/config
+          volumes:
+          - name: config-volume
+            configMap:
+              name: loki-queries
+          restartPolicy: OnFailure
