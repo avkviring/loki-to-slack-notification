@@ -18,7 +18,7 @@ fn create_message(loki_stream: &LokiStream, visible_labels: &[String]) -> String
     let mut message = String::new();
     visible_labels.iter().for_each(|label| {
         if let Some(value) = loki_stream.stream.get(label) {
-            message.push_str(format!("*{}*`{}`\n", label, value).as_str());
+            message.push_str(format!("*{}* `{}`\n", label, value).as_str());
         }
     });
     loki_stream
@@ -56,6 +56,6 @@ mod test {
 
         let labels = vec!["pod".to_string(), "namespace".to_string()];
         let message = create_message(&stream, &labels);
-        assert_eq!("*pod*`podA`\n*namespace*`production`\n```message1```\n```message2```\n", message);
+        assert_eq!("*pod* `podA`\n*namespace*` production`\n```message1```\n```message2```\n", message);
     }
 }
