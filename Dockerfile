@@ -4,7 +4,7 @@ COPY Cargo.toml Cargo.lock ./
 COPY ./src ./src
 RUN cargo build --release
 
-FROM debian:buster-slim
+FROM debian:12.10
 WORKDIR /usr/src/app
 
 # Copy the built binary from the previous stage
