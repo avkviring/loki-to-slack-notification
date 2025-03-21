@@ -18,6 +18,7 @@ fn read_envs() -> (String, String, String, Vec<String>) {
         .expect("VISIBLE_LABELS must be set")
         .split(",")
         .map(|v| v.to_string())
+        .map(|v| v.trim().to_string())
         .collect();
     (
         loki_url,
