@@ -9,6 +9,6 @@ WORKDIR /usr/src/app
 
 # Copy the built binary from the previous stage
 COPY --from=builder /usr/src/app/target/release/loki_to_slack_notification /
-
+RUN chmod +x loki_to_slack_notification
 # Command to run the application
-CMD ["./loki_to_slack_notification"]
+CMD ["/loki_to_slack_notification"]
