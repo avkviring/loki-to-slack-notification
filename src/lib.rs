@@ -24,17 +24,20 @@ pub fn execute(
     Ok(())
 }
 
-pub fn execute_query(loki_url: &str, queries: Vec<String>) -> Result<Vec<LokiStream>, Box<dyn Error>> {
+pub fn execute_query(
+    loki_url: &str,
+    queries: Vec<String>,
+) -> Result<Vec<LokiStream>, Box<dyn Error>> {
     let mut streams = vec![];
 
-    let now = SystemTime::now()
+    let to = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .unwrap()
         .as_secs();
-    let two_minutes_ago = now - 120;
+    let from = to - 60 * 5 - 10;
 
     for query in queries {
-        let result = invoke_loki_get_api(&loki_url, &query, two_minutes_ago, now);
+        let result = invoke_loki_get_api(&loki_url, &query, from, to);
         for stream in result.data.result {
             streams.push(stream);
         }
