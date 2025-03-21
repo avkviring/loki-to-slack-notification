@@ -34,7 +34,7 @@ pub fn execute_query(loki_url: &str, queries: Vec<String>) -> Result<Vec<LokiStr
     let two_minutes_ago = now - 120;
 
     for query in queries {
-        let result = invoke_loki_get_api(&loki_url, &query, two_minutes_ago, now)?;
+        let result = invoke_loki_get_api(&loki_url, &query, two_minutes_ago, now);
         for stream in result.data.result {
             streams.push(stream);
         }
