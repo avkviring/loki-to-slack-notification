@@ -21,10 +21,9 @@ fn create_message(loki_stream: &LokiStream, visible_labels: &[String]) -> String
             message.push_str(format!("*{}* `{}`\n", label, value).as_str());
         }
     });
-    loki_stream
-        .values
-        .iter()
-        .for_each(|item| message.push_str(format!("```{}```\n", item.1).as_str()));
+    loki_stream.values.iter().for_each(|item| {
+        message.push_str(format!("```{}```\n", item.1.replace("`", "~")).as_str())
+    });
     message
 }
 
@@ -50,12 +49,21 @@ mod test {
     #[test]
     fn test_create_message() {
         let stream = LokiStream {
-            stream: HashMap::from([("pod".to_string(),"podA".to_string()),("namespace".to_string(), "production".to_string())]),
-            values: vec![("time".to_string(),"message1".to_string()),("time".to_string(),"message2".to_string())],
+            stream: HashMap::from([
+                ("pod".to_string(), "podA".to_string()),
+                ("namespace".to_string(), "production".to_string()),
+            ]),
+            values: vec![
+                ("time".to_string(), "message1".to_string()),
+                ("time".to_string(), "message2`1".to_string()),
+            ],
         };
 
         let labels = vec!["pod".to_string(), "namespace".to_string()];
         let message = create_message(&stream, &labels);
-        assert_eq!("*pod* `podA`\n*namespace*` production`\n```message1```\n```message2```\n", message);
+        assert_eq!(
+            "*pod* `podA`\n*namespace* `production`\n```message1```\n```message2~1```\n",
+            message
+        );
     }
 }

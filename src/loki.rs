@@ -81,7 +81,7 @@ mod test {
                 "end".into(),
                 "1631234687".into(),
             ))
-            .match_query(mockito::Matcher::UrlEncoded("limit".into(), "1000".into()))
+            .match_query(mockito::Matcher::UrlEncoded("limit".into(), "50".into()))
             .with_status(200)
             .with_header("content-type", "application/json")
             .with_body(mock_response.to_string())
