@@ -15,11 +15,12 @@ pub fn execute(
     slack_webhook_url: &str,
     queries_config: &str,
     visible_labels: Vec<String>,
+    dc: &str,
 ) -> Result<(), Box<dyn Error>> {
     let queries = get_queries(queries_config);
     let streams = execute_query(&loki_url, queries)?;
     for stream in streams {
-        send_to_slack(slack_webhook_url, &stream, &visible_labels)?;
+        send_to_slack(slack_webhook_url, &stream, &visible_labels, dc)?;
     }
     Ok(())
 }

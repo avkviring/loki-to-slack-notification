@@ -6,16 +6,18 @@ pub fn send_to_slack(
     webhook_url: &str,
     loki_stream: &LokiStream,
     visible_labels: &Vec<String>,
+    dc: &str,
 ) -> Result<(), Box<dyn Error>> {
-    let formatted_message = create_message(loki_stream, visible_labels);
+    let formatted_message = create_message(loki_stream, visible_labels, dc);
     let slack = Slack::new(webhook_url)?;
     let payload = PayloadBuilder::new().text(formatted_message).build()?;
     slack.send(&payload)?;
     Ok(())
 }
 
-fn create_message(loki_stream: &LokiStream, visible_labels: &[String]) -> String {
+fn create_message(loki_stream: &LokiStream, visible_labels: &[String], dc: &str) -> String {
     let mut message = String::new();
+    message.push_str(format!("Datacenter *{}*\n", dc).as_str());
     visible_labels.iter().for_each(|label| {
         if let Some(value) = loki_stream.stream.get(label) {
             message.push_str(format!("*{}* `{}`\n", label, value).as_str());
@@ -42,7 +44,7 @@ mod test {
             .with_status(200)
             .create();
         let webhook_url = format!("{}/services/your/webhook/url", server.url());
-        let result = send_to_slack(&webhook_url, &Default::default(), &Default::default());
+        let result = send_to_slack(&webhook_url, &Default::default(), &Default::default(), "dc");
         assert!(result.is_ok());
     }
 
@@ -60,9 +62,8 @@ mod test {
         };
 
         let labels = vec!["pod".to_string(), "namespace".to_string()];
-        let message = create_message(&stream, &labels);
-        assert_eq!(
-            "*pod* `podA`\n*namespace* `production`\n```message1```\n```message2~1```\n",
+        let message = create_message(&stream, &labels, "dc");
+        assert_eq!("Datacenter *dc*\n*pod* `podA`\n*namespace* `production`\n```message1```\n```message2~1```\n",
             message
         );
     }
