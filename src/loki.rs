@@ -34,7 +34,9 @@ pub fn invoke_loki_get_api(loki_url: &str, query: &str, start: u64, end: u64) ->
         ])
         .send()
         .unwrap();
-    response.json().unwrap()
+    let json = response.json().unwrap();
+    println!("loki response {:?}", json);
+    json
 }
 
 #[cfg(test)]

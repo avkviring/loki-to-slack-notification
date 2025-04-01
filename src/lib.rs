@@ -16,19 +16,15 @@ pub fn execute(
     queries_config: &str,
     visible_labels: Vec<String>,
     dc: &str,
-) -> Result<(), Box<dyn Error>> {
+) {
     let queries = get_queries(queries_config);
-    let streams = execute_query(&loki_url, queries)?;
+    let streams = execute_query(&loki_url, queries);
     for stream in streams {
-        send_to_slack(slack_webhook_url, &stream, &visible_labels, dc)?;
+        send_to_slack(slack_webhook_url, &stream, &visible_labels, dc);
     }
-    Ok(())
 }
 
-pub fn execute_query(
-    loki_url: &str,
-    queries: Vec<String>,
-) -> Result<Vec<LokiStream>, Box<dyn Error>> {
+pub fn execute_query(loki_url: &str, queries: Vec<String>) -> Vec<LokiStream> {
     let mut streams = vec![];
 
     let to = SystemTime::now()
@@ -43,5 +39,5 @@ pub fn execute_query(
             streams.push(stream);
         }
     }
-    Ok(streams)
+    streams
 }

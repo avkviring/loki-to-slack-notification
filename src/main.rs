@@ -3,10 +3,9 @@ use std::env;
 use std::error::Error;
 use std::fs;
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main()  {
     let (loki_url, queries_config, slack_webhook_url, visible_labels, dc) = read_envs();
-    execute(loki_url.as_str(), slack_webhook_url.as_str(), queries_config.as_str(), visible_labels, dc.as_str())?;
-    Ok(())
+    execute(loki_url.as_str(), slack_webhook_url.as_str(), queries_config.as_str(), visible_labels, dc.as_str());
 }
 
 

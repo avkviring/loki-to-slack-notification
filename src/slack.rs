@@ -7,12 +7,14 @@ pub fn send_to_slack(
     loki_stream: &LokiStream,
     visible_labels: &Vec<String>,
     dc: &str,
-) -> Result<(), Box<dyn Error>> {
+) {
     let formatted_message = create_message(loki_stream, visible_labels, dc);
-    let slack = Slack::new(webhook_url)?;
-    let payload = PayloadBuilder::new().text(formatted_message).build()?;
-    slack.send(&payload)?;
-    Ok(())
+    let slack = Slack::new(webhook_url).unwrap();
+    let payload = PayloadBuilder::new()
+        .text(formatted_message)
+        .build()
+        .unwrap();
+    slack.send(&payload).unwrap();
 }
 
 fn create_message(loki_stream: &LokiStream, visible_labels: &[String], dc: &str) -> String {
@@ -44,8 +46,7 @@ mod test {
             .with_status(200)
             .create();
         let webhook_url = format!("{}/services/your/webhook/url", server.url());
-        let result = send_to_slack(&webhook_url, &Default::default(), &Default::default(), "dc");
-        assert!(result.is_ok());
+        send_to_slack(&webhook_url, &Default::default(), &Default::default(), "dc");
     }
 
     #[test]
