@@ -22,6 +22,12 @@ spec:
                 secretKeyRef:
                   name: slack-secret
                   key: webhook-url
+            - name: LOOP_WEBHOOK_URL          # опционально
+              valueFrom:
+                secretKeyRef:
+                  name: loop-secret
+                  key: webhook-url
+                  optional: true
             volumeMounts:
             - name: config-volume
               mountPath: /etc/config
